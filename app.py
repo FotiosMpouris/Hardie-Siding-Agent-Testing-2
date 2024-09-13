@@ -63,4 +63,4 @@ if user_question:
             answer = answer_question(user_question, common_questions, search_results, google_doc_content, scraped_content)
             answer = common_responses.get(user_question.lower(), answer)  # Use fallback if question matches
             st.write(answer)
-st.write("Feel free to ask more questions in the existing question box.")
+st.write("Feel free to ask more questions in the question box.")
