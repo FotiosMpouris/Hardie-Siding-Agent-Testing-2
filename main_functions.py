@@ -166,6 +166,34 @@ def test_google_drive_access():
         st.error(f"Credentials info: {creds.to_json()[:100]}...")  # Show first 100 chars of credentials
         return False
 # New function to integrate colab agent functionality
+# def siding_project_agent(user_question, search_results, cold_email, google_doc_content):
+#     if user_question.lower() == 'exit':
+#         st.write("Exiting the program.")
+#         return
+
+#     response = together_client.chat.completions.create(
+#         model="meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo",
+#         messages=[
+#             {
+#                 "role": "system",
+#                 "content": "You are an expert James Hardie siding installer. Answer the user's question based on the previous data collected."
+#             },
+#             {
+#                 "role": "user",
+#                 "content": f"Target: {user_question} \n Search Results: {search_results} \n Cold Email: {cold_email} \n Google Doc Content: {google_doc_content} \n User Question: {user_question}"
+#             }
+#         ],
+#         max_tokens=500,
+#         temperature=0.1,
+#         top_p=1,
+#         top_k=50,
+#         repetition_penalty=1,
+#         stop=["<|eot_id|>"]
+#     )
+#     st.write(response.choices[0].message.content)
+
+# # Modified answer_question function to incorporate siding_project_agent
+
 def siding_project_agent(user_question, search_results, cold_email, google_doc_content):
     if user_question.lower() == 'exit':
         st.write("Exiting the program.")
@@ -176,23 +204,17 @@ def siding_project_agent(user_question, search_results, cold_email, google_doc_c
         messages=[
             {
                 "role": "system",
-                "content": "You are an expert James Hardie siding installer. Answer the user's question based on the previous data collected."
+                "content": "You are an expert James Hardie siding installer. Respond in first person, as if directly speaking to the customer. Be concise and avoid repetition. Focus on answering the user's question based on the provided information."
             },
             {
                 "role": "user",
-                "content": f"Target: {user_question} \n Search Results: {search_results} \n Cold Email: {cold_email} \n Google Doc Content: {google_doc_content} \n User Question: {user_question}"
+                "content": f"User Question: {user_question}\nSearch Results: {search_results}\nCold Email: {cold_email}\nGoogle Doc Content: {google_doc_content}"
             }
         ],
-        max_tokens=500,
-        temperature=0.1,
-        top_p=1,
-        top_k=50,
-        repetition_penalty=1,
-        stop=["<|eot_id|>"]
+        max_tokens=300,
+        temperature=0.7,
     )
     st.write(response.choices[0].message.content)
-
-# Modified answer_question function to incorporate siding_project_agent
 def answer_question(question, common_questions, search_results, google_doc_content, url=None):
     try:
         scraped_content = scrape_specific_url(url) if url else ""
