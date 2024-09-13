@@ -166,31 +166,63 @@ def test_google_drive_access():
         st.error(f"Credentials info: {creds.to_json()[:100]}...")  # Show first 100 chars of credentials
         return False
 # New function to integrate colab agent functionality
+# def siding_project_agent(user_question, search_results, cold_email, google_doc_content):
+#     if user_question.lower() == 'exit':
+#         st.write("Exiting the program.")
+#         return
+
+#     response = together_client.chat.completions.create(
+#         model="meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo",
+#         messages=[
+#             {
+#                 "role": "system",
+#                 "content": "You are an expert James Hardie siding installer. Answer the user's question based on the previous data collected."
+#             },
+#             {
+#                 "role": "user",
+#                 "content": f"Target: {user_question} \n Search Results: {search_results} \n Cold Email: {cold_email} \n Google Doc Content: {google_doc_content} \n User Question: {user_question}"
+#             }
+#         ],
+#         max_tokens=500,
+#         temperature=0.1,
+#         top_p=1,
+#         top_k=50,
+#         repetition_penalty=1,
+#         stop=["<|eot_id|>"]
+#     )
+#     st.write(response.choices[0].message.content)
+
+def truncate_text(text, max_tokens=400):  # Adjusting to allow room for max_tokens
+    tokens = text.split()  # Simple tokenization by splitting on spaces
+    return ' '.join(tokens[:max_tokens])
+
 def siding_project_agent(user_question, search_results, cold_email, google_doc_content):
     if user_question.lower() == 'exit':
         st.write("Exiting the program.")
         return
+
+    # Truncate the inputs to ensure the total input tokens fit the model's limit
+    search_results = truncate_text(search_results, max_tokens=400)  # Allow space for other inputs
+    google_doc_content = truncate_text(google_doc_content, max_tokens=400)
 
     response = together_client.chat.completions.create(
         model="meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo",
         messages=[
             {
                 "role": "system",
-                "content": "You are an expert James Hardie siding installer. Answer the user's question based on the previous data collected."
+                "content": """You are an expert James Hardie siding installer speaking directly to a customer. 
+                Provide concise, first-person responses. Focus on answering the user's question directly.
+                Avoid repetition and keep your answer under 100 words. If you're unsure about something, 
+                it's okay to say so. Offer to provide more details if the user wants them."""
             },
             {
                 "role": "user",
-                "content": f"Target: {user_question} \n Search Results: {search_results} \n Cold Email: {cold_email} \n Google Doc Content: {google_doc_content} \n User Question: {user_question}"
+                "content": f"User Question: {user_question}\nRelevant Information: {search_results}\n{google_doc_content}"
             }
         ],
-        max_tokens=500,
-        temperature=0.1,
-        top_p=1,
-        top_k=50,
-        repetition_penalty=1,
-        stop=["<|eot_id|>"]
+        max_tokens=500,  # Keeping max_tokens at 500
+        temperature=0.7,
     )
-    st.write(response.choices[0].message.content)
 
 # Modified answer_question function to incorporate siding_project_agent
 def answer_question(question, common_questions, search_results, google_doc_content, url=None):
