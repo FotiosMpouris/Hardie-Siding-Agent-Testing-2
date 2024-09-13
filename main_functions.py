@@ -192,38 +192,36 @@ def test_google_drive_access():
 #     )
 #     st.write(response.choices[0].message.content)
 
-def truncate_text(text, max_tokens=400):  # Adjusting to allow room for max_tokens
-    tokens = text.split()  # Simple tokenization by splitting on spaces
-    return ' '.join(tokens[:max_tokens])
-
 def siding_project_agent(user_question, search_results, cold_email, google_doc_content):
     if user_question.lower() == 'exit':
         st.write("Exiting the program.")
         return
 
-    # Truncate the inputs to ensure the total input tokens fit the model's limit
-    search_results = truncate_text(search_results, max_tokens=400)  # Allow space for other inputs
-    google_doc_content = truncate_text(google_doc_content, max_tokens=400)
+    combined_input = f"User Question: {user_question}\nRelevant Information: {search_results}\n{google_doc_content}"
 
-    response = together_client.chat.completions.create(
-        model="meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo",
-        messages=[
-            {
-                "role": "system",
-                "content": """You are an expert James Hardie siding installer speaking directly to a customer. 
-                Provide concise, first-person responses. Focus on answering the user's question directly.
-                Avoid repetition and keep your answer under 100 words. If you're unsure about something, 
-                it's okay to say so. Offer to provide more details if the user wants them."""
-            },
-            {
-                "role": "user",
-                "content": f"User Question: {user_question}\nRelevant Information: {search_results}\n{google_doc_content}"
-            }
-        ],
-        max_tokens=500,  # Keeping max_tokens at 500
-        temperature=0.7,
-    )
-
+    try:
+        response = together_client.chat.completions.create(
+            model="mistralai/Mixtral-8x7B-Instruct-v0.1",  # Changed to Mixtral model
+            messages=[
+                {
+                    "role": "system",
+                    "content": """You are an expert James Hardie siding installer speaking directly to a customer. 
+                    Provide concise, first-person responses. Focus on answering the user's question directly.
+                    Avoid repetition and keep your answer under 100 words. If you're unsure about something, 
+                    it's okay to say so. Offer to provide more details if the user wants them."""
+                },
+                {
+                    "role": "user",
+                    "content": combined_input
+                }
+            ],
+            max_tokens=500,
+            temperature=0.7,
+        )
+        st.write(response.choices[0].message.content)
+    except Exception as e:
+        st.error(f"Error in siding_project_agent: {str(e)}")
+        st.write("I apologize, but I'm having trouble processing your request at the moment. Please try again or rephrase your question.")
 # Modified answer_question function to incorporate siding_project_agent
 def answer_question(question, common_questions, search_results, google_doc_content, url=None):
     try:
