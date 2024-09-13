@@ -204,14 +204,17 @@ def siding_project_agent(user_question, search_results, cold_email, google_doc_c
         messages=[
             {
                 "role": "system",
-                "content": "You are an expert James Hardie siding installer. Respond in first person, as if directly speaking to the customer. Be concise and avoid repetition. Focus on answering the user's question based on the provided information."
+                "content": """You are an expert James Hardie siding installer speaking directly to a customer. 
+                Provide concise, first-person responses. Focus on answering the user's question directly.
+                Avoid repetition and keep your answer under 100 words. If you're unsure about something, 
+                it's okay to say so. Offer to provide more details if the user wants them."""
             },
             {
                 "role": "user",
-                "content": f"User Question: {user_question}\nSearch Results: {search_results}\nCold Email: {cold_email}\nGoogle Doc Content: {google_doc_content}"
+                "content": f"User Question: {user_question}\nRelevant Information: {search_results}\n{google_doc_content}"
             }
         ],
-        max_tokens=300,
+        max_tokens=150,
         temperature=0.7,
     )
     st.write(response.choices[0].message.content)
