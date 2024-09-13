@@ -24,22 +24,16 @@ if user_question and user_question.lower() != 'exit':
     # Perform search
     search_results = search_hardie_siding(user_question)
 
-    # Generate cold email
-    cold_email = cold_email_agent(user_question, search_results)
-
-    # URL Construction with fallback
-    query_mapping = {
-        "what colors does hardie siding offer": "products/colors",
-        "what styles of siding are available": "products/styles"
-    }
-    default_query = "products"
-    page_path = query_mapping.get(user_question.lower(), default_query)
-    url = f"https://www.jameshardie.com/{page_path}"
+    # Scrape relevant content
+    url = f"https://www.jameshardie.com/products"
     scraped_content = scrape_specific_url(url)
+
+    # Combine all relevant information
+    all_info = f"{search_results}\n{google_doc_content}\n{scraped_content}"
 
     # Use siding_project_agent for interactive Q&A
     st.subheader("Expert Answer")
-    siding_project_agent(user_question, search_results, cold_email, google_doc_content + "\n" + scraped_content)
+    siding_project_agent(user_question, all_info, "", "")
 
     st.write("Feel free to ask more questions in the existing question box.")
 elif user_question.lower() == 'exit':
