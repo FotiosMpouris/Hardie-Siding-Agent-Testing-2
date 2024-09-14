@@ -328,7 +328,78 @@ def cold_email_agent(target, search_results):
     )
     return response.choices[0].message.content
 
+def video_transcript_agent(folder_id):
+    """
+    Generate a new video transcript based on existing documents in the Google Drive folder.
+    """
+    try:
+        # Get all documents from the specified folder
+        query = f"'{folder_id}' in parents and mimeType='application/vnd.google-apps.document'"
+        results = drive_service.files().list(q=query).execute()
+        files = results.get('files', [])
+
+        if not files:
+            return "No documents found in the specified folder."
+
+        # Combine content from all documents
+        all_content = ""
+        for file in files:
+            doc_content = get_google_doc_content(file['id'])
+            all_content += doc_content + "\n\n"
+
+        # Generate new transcript using the AI model
+        response = together_client.chat.completions.create(
+            model="meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo",
+            messages=[
+                {
+                    "role": "system",
+                    "content": """You are a professional script writing agent for a James Hardie siding sales team. 
+                    Use the provided transcripts to create a template that new sales teams can use. 
+                    Cover the most common themes present in the transcripts, while allowing for unique elements for new customers. 
+                    Maintain the most important elements that are present in the provided transcripts."""
+                },
+                {
+                    "role": "user",
+                    "content": f"Create a new video transcript template based on the following content:\n\n{all_content}"
+                }
+            ],
+            max_tokens=1000,
+            temperature=0.7,
+        )
+
+        return response.choices[0].message.content
+
+    except Exception as e:
+        st.error(f"Error in video_transcript_agent: {str(e)}")
+        return f"Unable to generate a new video transcript due to an error: {str(e)}"
+
 # Main function to orchestrate the process
+# def main():
+#     st.title("Hardie Siding Project Assistant")
+
+#     # Get user address and retrieve Google Doc content
+#     user_address = st.text_input("Please enter your address:")
+#     if user_address:
+#         google_doc_content = get_google_doc_by_address(user_address)
+#     else:
+#         google_doc_content = ""
+
+#     # Get user input for search query
+#     user_input = st.text_input("Enter your question about Hardie siding:")
+
+#     if user_input:
+#         # Generate queries based on the user input
+#         generated_queries = get_common_questions()  # You might want to modify this to generate queries based on user input
+
+#         # Perform web searches for each query
+#         search_results = [search_hardie_siding(query) for query in generated_queries]
+
+#         # Generate a cold email based on the user input and search results
+#         cold_email = cold_email_agent(user_input, search_results)
+
+#         # Call the siding_project_agent function with the retrieved Google Doc content
+#         siding_project_agent(user_input, search_results, cold_email, google_doc_content)
+
 def main():
     st.title("Hardie Siding Project Assistant")
 
@@ -354,6 +425,15 @@ def main():
 
         # Call the siding_project_agent function with the retrieved Google Doc content
         siding_project_agent(user_input, search_results, cold_email, google_doc_content)
+
+    # New feature: Generate video transcript
+    st.write("---")
+    st.write("Generate new video transcript for new client")
+    if st.button("Click Here"):
+        folder_id = '1Knd9Wk7pMSZue2mdgZZQtQfy1waUeLXH'  # Your Google Drive folder ID
+        new_transcript = video_transcript_agent(folder_id)
+        st.write("New Video Transcript Template:")
+        st.text_area("Generated Transcript", new_transcript, height=300)
 
 if __name__ == "__main__":
     main()
