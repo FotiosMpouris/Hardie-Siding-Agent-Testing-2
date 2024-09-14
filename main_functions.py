@@ -206,7 +206,7 @@ def test_google_drive_access():
 #                 "role": "system",
 #                 "content": """You are an expert James Hardie siding installer speaking directly to a customer. 
 #                 Provide concise, first-person responses. Focus on answering the user's question directly.
-#                 Avoid repetition and keep your answer under 300 words. If you're unsure about something, 
+#                 Avoid repetition and keep your answer above 200 words but under 300 words. If you're unsure about something, 
 #                 it's okay to say so. Offer to provide more details if the user wants them."""
 #             },
 #             {
