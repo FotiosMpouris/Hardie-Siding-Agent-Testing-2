@@ -18,7 +18,7 @@ if address:
 
 # Interactive Q&A
 st.header("Ask Questions About Your Siding Project")
-user_question = st.text_input("Do you have any questions about your Hardie siding project? (type 'exit' to quit)")
+user_question = st.text_input("Do you have any questions about your Hardie siding project?")
 
 if user_question and user_question.lower() != 'exit':
     # Perform search
