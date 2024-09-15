@@ -5,7 +5,9 @@ from main_functions import (
 )
 
 st.title("Hardie Siding Assistant")
+
 new_project_info = st.text_area("Please Enter New Project Information", height=200)
+folder_id = st.text_input("Enter Google Drive Folder ID", value="1Knd9Wk7pMSZue2mdgZZQtQfy1waUeLXH")
 # Get user's address
 st.header("Your Hardie Siding Project")
 address = st.text_input("Please enter your address:")
@@ -49,13 +51,27 @@ if st.button("Generate New Video Transcript (Old Method)"):
         )
     else:
         st.warning("Please enter a folder ID.")
-if st.button("Generate New Script"):
-    if folder_id and new_project_info:
-        new_script = video_transcript_agent(folder_id, new_project_info)
-        st.write("Generated Script:")
-        st.write(new_script)
+if st.button("Generate New Video Transcript (Old Method)"):
+    if folder_id:
+        with st.spinner("Generating new video transcript..."):
+            new_transcript = video_transcript_agent(folder_id, "")  # Passing an empty string for new_project_info
+        st.subheader("New Video Transcript Template:")
+        st.text_area("Generated Transcript", new_transcript, height=300)
+        st.download_button(
+            label="Download New Transcript",
+            data=new_transcript,
+            file_name="new_transcript.txt",
+            mime="text/plain"
+        )
     else:
-        st.warning("Please enter both a folder ID and new project information.")
+        st.warning("Please enter a folder ID.")
+# if st.button("Generate New Script"):
+#     if folder_id and new_project_info:
+#         new_script = video_transcript_agent(folder_id, new_project_info)
+#         st.write("Generated Script:")
+#         st.write(new_script)
+#     else:
+#         st.warning("Please enter both a folder ID and new project information.")
 
 # import streamlit as st
 # from main_functions import (
