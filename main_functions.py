@@ -24,6 +24,52 @@ drive_service = build('drive', 'v3', credentials=creds)
 docs_service = build('docs', 'v1', credentials=creds)
 
 # Existing functions (unchanged)
+
+def video_transcript_agent(folder_id):
+    """
+    Generate a new video transcript based on existing documents in the Google Drive folder.
+    """
+    try:
+        # Get all documents from the specified folder
+        query = f"'{folder_id}' in parents and mimeType='application/vnd.google-apps.document'"
+        results = drive_service.files().list(q=query).execute()
+        files = results.get('files', [])
+
+        if not files:
+            return "No documents found in the specified folder."
+
+        # Combine content from all documents
+        all_content = ""
+        for file in files:
+            doc_content = get_google_doc_content(file['id'])
+            all_content += doc_content + "\n\n"
+
+        # Generate new transcript using the AI model
+        response = together_client.chat.completions.create(
+            model="meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo",
+            messages=[
+                {
+                    "role": "system",
+                    "content": """You are a professional script writing agent for a James Hardie siding sales team. 
+                    Use the provided transcripts to create a template that new sales teams can use. 
+                    Cover the most common themes present in the transcripts, while allowing for unique elements for new customers. 
+                    Maintain the most important elements that are present in the provided transcripts."""
+                },
+                {
+                    "role": "user",
+                    "content": f"Create a new video transcript template based on the following content:\n\n{all_content}"
+                }
+            ],
+            max_tokens=1000,
+            temperature=0.7,
+        )
+
+        return response.choices[0].message.content
+
+    except Exception as e:
+        st.error(f"Error in video_transcript_agent: {str(e)}")
+        return f"Unable to generate a new video transcript due to an error: {str(e)}"
+
 #def scrape_specific_url(url):
     # ... (keep the existing implementation)
 def scrape_specific_url(url):
@@ -328,50 +374,7 @@ def cold_email_agent(target, search_results):
     )
     return response.choices[0].message.content
 
-def video_transcript_agent(folder_id):
-    """
-    Generate a new video transcript based on existing documents in the Google Drive folder.
-    """
-    try:
-        # Get all documents from the specified folder
-        query = f"'{folder_id}' in parents and mimeType='application/vnd.google-apps.document'"
-        results = drive_service.files().list(q=query).execute()
-        files = results.get('files', [])
 
-        if not files:
-            return "No documents found in the specified folder."
-
-        # Combine content from all documents
-        all_content = ""
-        for file in files:
-            doc_content = get_google_doc_content(file['id'])
-            all_content += doc_content + "\n\n"
-
-        # Generate new transcript using the AI model
-        response = together_client.chat.completions.create(
-            model="meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo",
-            messages=[
-                {
-                    "role": "system",
-                    "content": """You are a professional script writing agent for a James Hardie siding sales team. 
-                    Use the provided transcripts to create a template that new sales teams can use. 
-                    Cover the most common themes present in the transcripts, while allowing for unique elements for new customers. 
-                    Maintain the most important elements that are present in the provided transcripts."""
-                },
-                {
-                    "role": "user",
-                    "content": f"Create a new video transcript template based on the following content:\n\n{all_content}"
-                }
-            ],
-            max_tokens=1000,
-            temperature=0.7,
-        )
-
-        return response.choices[0].message.content
-
-    except Exception as e:
-        st.error(f"Error in video_transcript_agent: {str(e)}")
-        return f"Unable to generate a new video transcript due to an error: {str(e)}"
 
 # Main function to orchestrate the process
 # def main():
