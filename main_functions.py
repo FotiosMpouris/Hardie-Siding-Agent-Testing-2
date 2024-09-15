@@ -60,7 +60,7 @@ def video_transcript_agent(folder_id):
                     "content": f"Create a new video transcript template based on the following content:\n\n{all_content}"
                 }
             ],
-            max_tokens=1000,
+            max_tokens=500,
             temperature=0.7,
         )
 
