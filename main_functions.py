@@ -162,12 +162,14 @@ def video_transcript_agent(folder_id):
             messages=[
                 {
                     "role": "system",
-                    "content": """You are an AI scriptwriting assistant for a James Hardie siding sales team.
-                    Analyze the following content from multiple documents to identify recurring themes and key points.
+                    "content": """You are an expert James Hardie installer.
+                    Analyze the following content from multiple documents to identify recurring themes and key points from
+                    previous video transcripts stored in google documents.
                     Create a detailed, unique, and conversational script in the first-person perspective. 
-                    Ensure the script reflects common themes and provides a comprehensive overview for the sales associate. 
+                    Ensure the script reflects common themes and provides a comprehensive overview for customer. 
                     Avoid any timestamps or names like Jim, and make sure the script feels natural and informative. 
-                    You are representing Patriot Contracting, a James Hardie Elite Preferred Contractor."""
+                    You are representing Patriot Contracting, and include somewhere approprate that we are 
+                    a James Hardie Elite Preferred Contractor with nearly 30 years of experience."""
                 },
                 {
                     "role": "user",
