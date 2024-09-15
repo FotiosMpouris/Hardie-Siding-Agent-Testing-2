@@ -77,6 +77,15 @@ def remove_timestamps(text):
     """Remove timestamps in the format [hh:mm:ss] from the text."""
     return re.sub(r'\[\d{2}:\d{2}:\d{2}\]', '', text)
 
+def extract_common_points(doc_contents):
+    """Extract and return common themes from a list of document contents."""
+    # Placeholder for a more sophisticated common points extraction logic
+    # For now, we'll just concatenate and return the cleaned content
+    all_content = "\n\n".join(doc_contents)
+    # Implement common points extraction logic here
+    # For example, use NLP techniques to identify recurring themes
+    return all_content
+
 def video_transcript_agent(folder_id):
     """
     Generate a new video transcript based on existing documents in the Google Drive folder.
@@ -91,11 +100,14 @@ def video_transcript_agent(folder_id):
             return "No documents found in the specified folder."
 
         # Combine content from all documents
-        all_content = ""
+        doc_contents = []
         for file in files:
             doc_content = get_google_doc_content(file['id'])
             cleaned_content = remove_timestamps(doc_content)  # Remove timestamps
-            all_content += cleaned_content + "\n\n"
+            doc_contents.append(cleaned_content)
+
+        # Extract common points from the document contents
+        common_points = extract_common_points(doc_contents)
 
         # Generate new transcript using the AI model in a first-person conversational tone
         response = together_client.chat.completions.create(
@@ -104,14 +116,15 @@ def video_transcript_agent(folder_id):
                 {
                     "role": "system",
                     "content": """You are an AI scriptwriting assistant for a James Hardie siding sales team.
-                    Use the provided transcripts to create a conversational script in the first-person perspective. 
-                    Refer to yourself as 'we' or 'I' where appropriate, as if you are directly talking to the customer. 
-                    Remove any timestamps or names like Jim, and make sure the script feels natural and informative. 
+                    Analyze the following content from multiple documents to identify recurring themes and key points.
+                    Create a detailed, unique, and conversational script in the first-person perspective. 
+                    Ensure the script reflects common themes and provides a comprehensive overview for the sales associate. 
+                    Avoid any timestamps or names like Jim, and make sure the script feels natural and informative. 
                     You are representing Patriot Contracting, a James Hardie Elite Preferred Contractor."""
                 },
                 {
                     "role": "user",
-                    "content": f"Create a new video transcript template based on the following content:\n\n{all_content}"
+                    "content": f"Create a detailed video transcript script based on the following content:\n\n{common_points}"
                 }
             ],
             max_tokens=1000,
