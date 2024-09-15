@@ -35,21 +35,20 @@ elif user_question.lower() == 'exit':
     st.write("Thank you for using the Hardie Siding Assistant!")
 
 # New feature: Generate video transcript
-st.header("Generate New Video Transcript")
-st.write("Click the button below to generate a new video transcript template based on existing documents.")
-if st.button("Generate New Video Transcript"):
-    folder_id = '1Knd9Wk7pMSZue2mdgZZQtQfy1waUeLXH'  # Your Google Drive folder ID
-    with st.spinner("Generating new video transcript..."):
-        new_transcript = video_transcript_agent(folder_id)
-    st.subheader("New Video Transcript Template:")
-    st.text_area("Generated Transcript", new_transcript, height=300)
-    st.download_button(
-        label="Download Transcript",
-        data=new_transcript,
-        file_name="new_video_transcript.txt",
-        mime="text/plain"
-    )
-
+if st.button("Generate New Video Transcript (Old Method)"):
+    if folder_id:
+        with st.spinner("Generating new video transcript..."):
+            new_transcript = video_transcript_agent(folder_id, "")  # Passing an empty string for new_project_info
+        st.subheader("New Video Transcript Template:")
+        st.text_area("Generated Transcript", new_transcript, height=300)
+        st.download_button(
+            label="Download New Transcript",
+            data=new_transcript,
+            file_name="new_transcript.txt",
+            mime="text/plain"
+        )
+    else:
+        st.warning("Please enter a folder ID.")
 if st.button("Generate New Script"):
     if folder_id and new_project_info:
         new_script = video_transcript_agent(folder_id, new_project_info)
