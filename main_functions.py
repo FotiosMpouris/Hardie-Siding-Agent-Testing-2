@@ -46,7 +46,7 @@ def video_transcript_agent(folder_id):
 
         # Generate new transcript using the AI model
         response = together_client.chat.completions.create(
-            model="meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo",
+            model="mistralai/Mixtral-8x7B-Instruct-v0.1",
             messages=[
                 {
                     "role": "system",
