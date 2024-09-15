@@ -25,6 +25,57 @@ docs_service = build('docs', 'v1', credentials=creds)
 
 # Existing functions (unchanged)
 
+# def video_transcript_agent(folder_id):
+#     """
+#     Generate a new video transcript based on existing documents in the Google Drive folder.
+#     """
+#     try:
+#         # Get all documents from the specified folder
+#         query = f"'{folder_id}' in parents and mimeType='application/vnd.google-apps.document'"
+#         results = drive_service.files().list(q=query).execute()
+#         files = results.get('files', [])
+
+#         if not files:
+#             return "No documents found in the specified folder."
+
+#         # Combine content from all documents
+#         all_content = ""
+#         for file in files:
+#             doc_content = get_google_doc_content(file['id'])
+#             all_content += doc_content + "\n\n"
+
+#         # Generate new transcript using the AI model
+#         response = together_client.chat.completions.create(
+#             model="mistralai/Mixtral-8x7B-Instruct-v0.1",
+#             messages=[
+#                 {
+#                     "role": "system",
+#                     "content": """You are a professional script writing agent for a James Hardie siding sales team. 
+#                     Use the provided transcripts to create a template that new sales teams can use. 
+#                     Cover the most common themes present in the transcripts, while allowing for unique elements for new customers. 
+#                     Always mentioned that you work for Patriot Contracting and that you we are a James Hardie Elite Preferred Contractor. 
+#                     Maintain the most important elements that are present in the provided transcripts."""
+#                 },
+#                 {
+#                     "role": "user",
+#                     "content": f"Create a new video transcript template based on the following content:\n\n{all_content}"
+#                 }
+#             ],
+#             max_tokens=1000,
+#             temperature=0.7,
+#         )
+
+#         return response.choices[0].message.content
+
+#     except Exception as e:
+#         st.error(f"Error in video_transcript_agent: {str(e)}")
+#         return f"Unable to generate a new video transcript due to an error: {str(e)}"
+
+
+def remove_timestamps(text):
+    """Remove timestamps in the format [hh:mm:ss] from the text."""
+    return re.sub(r'\[\d{2}:\d{2}:\d{2}\]', '', text)
+
 def video_transcript_agent(folder_id):
     """
     Generate a new video transcript based on existing documents in the Google Drive folder.
@@ -42,19 +93,20 @@ def video_transcript_agent(folder_id):
         all_content = ""
         for file in files:
             doc_content = get_google_doc_content(file['id'])
-            all_content += doc_content + "\n\n"
+            cleaned_content = remove_timestamps(doc_content)  # Remove timestamps
+            all_content += cleaned_content + "\n\n"
 
-        # Generate new transcript using the AI model
+        # Generate new transcript using the AI model in a first-person conversational tone
         response = together_client.chat.completions.create(
             model="mistralai/Mixtral-8x7B-Instruct-v0.1",
             messages=[
                 {
                     "role": "system",
-                    "content": """You are a professional script writing agent for a James Hardie siding sales team. 
-                    Use the provided transcripts to create a template that new sales teams can use. 
-                    Cover the most common themes present in the transcripts, while allowing for unique elements for new customers. 
-                    Always mentioned that you work for Patriot Contracting and that you we are a James Hardie Elite Preferred Contractor. 
-                    Maintain the most important elements that are present in the provided transcripts."""
+                    "content": """You are an AI scriptwriting assistant for a James Hardie siding sales team.
+                    Use the provided transcripts to create a conversational script in the first-person perspective. 
+                    Refer to yourself as 'we' or 'I' where appropriate, as if you are directly talking to the customer. 
+                    Remove any timestamps or names like Jim, and make sure the script feels natural and informative. 
+                    You are representing Patriot Contracting, a James Hardie Elite Preferred Contractor."""
                 },
                 {
                     "role": "user",
@@ -70,7 +122,6 @@ def video_transcript_agent(folder_id):
     except Exception as e:
         st.error(f"Error in video_transcript_agent: {str(e)}")
         return f"Unable to generate a new video transcript due to an error: {str(e)}"
-
 #def scrape_specific_url(url):
     # ... (keep the existing implementation)
 def scrape_specific_url(url):
