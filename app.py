@@ -37,20 +37,22 @@ elif user_question.lower() == 'exit':
     st.write("Thank you for using the Hardie Siding Assistant!")
 
 # New feature: Generate video transcript
-if st.button("Generate New Video Transcript (Old Method)"):
-    if folder_id:
-        with st.spinner("Generating new video transcript..."):
-            new_transcript = video_transcript_agent(folder_id, "")  # Passing an empty string for new_project_info
-        st.subheader("New Video Transcript Template:")
-        st.text_area("Generated Transcript", new_transcript, height=300)
+if st.button("Generate New Script", key="generate_new_script"):
+    if folder_id and new_project_info:
+        with st.spinner("Generating new script..."):
+            new_script = video_transcript_agent(folder_id, new_project_info)
+        st.subheader("Generated Script:")
+        st.text_area("New Script", new_script, height=300)
         st.download_button(
-            label="Download New Transcript",
-            data=new_transcript,
-            file_name="new_transcript.txt",
-            mime="text/plain"
+            label="Download New Script",
+            data=new_script,
+            file_name="new_script.txt",
+            mime="text/plain",
+            key="download_new_script"
         )
     else:
-        st.warning("Please enter a folder ID.")
+        st.warning("Please enter both a folder ID and new project information.")
+        
 if st.button("Generate New Video Transcript (Old Method)"):
     if folder_id:
         with st.spinner("Generating new video transcript..."):
