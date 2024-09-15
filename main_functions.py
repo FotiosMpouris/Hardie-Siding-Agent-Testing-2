@@ -9,6 +9,10 @@ import streamlit as st
 from bs4 import BeautifulSoup
 import requests
 import re
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+from collections import defaultdict
+import numpy as np
 
 # Load environment variables and initialize clients (unchanged)
 load_dotenv()
@@ -77,14 +81,57 @@ def remove_timestamps(text):
     """Remove timestamps in the format [hh:mm:ss] from the text."""
     return re.sub(r'\[\d{2}:\d{2}:\d{2}\]', '', text)
 
+# def extract_common_points(doc_contents):
+#     """Extract and return common themes from a list of document contents."""
+#     # Placeholder for a more sophisticated common points extraction logic
+#     # For now, we'll just concatenate and return the cleaned content
+#     all_content = "\n\n".join(doc_contents)
+#     # Implement common points extraction logic here
+#     # For example, use NLP techniques to identify recurring themes
+#     return all_content
+
 def extract_common_points(doc_contents):
-    """Extract and return common themes from a list of document contents."""
-    # Placeholder for a more sophisticated common points extraction logic
-    # For now, we'll just concatenate and return the cleaned content
-    all_content = "\n\n".join(doc_contents)
-    # Implement common points extraction logic here
-    # For example, use NLP techniques to identify recurring themes
-    return all_content
+    """Extract and return common themes from a list of document contents using TF-IDF and cosine similarity."""
+    # Vectorize the document contents
+    vectorizer = TfidfVectorizer(stop_words='english')
+    X = vectorizer.fit_transform(doc_contents)
+    
+    # Calculate the similarity matrix
+    similarity_matrix = cosine_similarity(X, X)
+    
+    # Identify common themes
+    common_themes = defaultdict(float)
+    
+    # Average similarity score for each term
+    terms = vectorizer.get_feature_names_out()
+    for i in range(len(doc_contents)):
+        # Get the index of the most similar document
+        similar_indices = np.argsort(similarity_matrix[i])[::-1]
+        
+        # Aggregate terms from similar documents
+        for j in similar_indices:
+            if i != j:  # Ignore self-similarity
+                for term_index in X[i].indices:
+                    term = terms[term_index]
+                    common_themes[term] += similarity_matrix[i][j]
+    
+    # Sort themes by relevance
+    sorted_themes = sorted(common_themes.items(), key=lambda x: x[1], reverse=True)
+    
+    # Create a summary of common themes
+    summary = "\n".join([f"{term}: {score:.2f}" for term, score in sorted_themes])
+    
+    return summary
+
+# Example usage
+doc_contents = [
+    "Document content 1 with common theme.",
+    "Document content 2 with a recurring theme.",
+    "Another document with similar themes."
+]
+
+common_points_summary = extract_common_points(doc_contents)
+print(common_points_summary)
 
 def video_transcript_agent(folder_id):
     """
