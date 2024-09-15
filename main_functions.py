@@ -8,6 +8,7 @@ from googleapiclient.discovery import build
 import streamlit as st
 from bs4 import BeautifulSoup
 import requests
+import re
 
 # Load environment variables and initialize clients (unchanged)
 load_dotenv()
