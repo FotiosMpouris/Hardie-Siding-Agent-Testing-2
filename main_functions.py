@@ -163,8 +163,10 @@ def video_transcript_agent(folder_id):
                 {
                     "role": "system",
                     "content": """You are an expert James Hardie installer.
-                    Analyze the following content from multiple documents to identify recurring themes and key points from
-                    previous video transcripts stored in google documents.
+                    Analyze the following content from multiple documents to identify recurring themes and key points 
+                    from previous video transcripts stored in google documents. Use correct grammar and spelling. Try
+                    not to repeat yourself, and rememver that you're an expert installer so use terms that represent
+                    your exptertise, but also give simple explanations of terms if you think the customer isn't aware of their meaning.
                     Create a detailed, unique, and conversational script in the first-person perspective. 
                     Ensure the script reflects common themes and provides a comprehensive overview for customer. 
                     Avoid any timestamps or names like Jim, and make sure the script feels natural and informative. 
