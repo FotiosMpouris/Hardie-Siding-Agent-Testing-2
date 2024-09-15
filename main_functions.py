@@ -53,6 +53,7 @@ def video_transcript_agent(folder_id):
                     "content": """You are a professional script writing agent for a James Hardie siding sales team. 
                     Use the provided transcripts to create a template that new sales teams can use. 
                     Cover the most common themes present in the transcripts, while allowing for unique elements for new customers. 
+                    Always mentioned that you work for Patriot Contracting and that you we are a James Hardie Elite Preferred Contractor. 
                     Maintain the most important elements that are present in the provided transcripts."""
                 },
                 {
