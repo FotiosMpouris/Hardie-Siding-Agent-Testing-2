@@ -164,10 +164,11 @@ def video_transcript_agent(folder_id):
                     "role": "system",
                     "content": """You are an AI scriptwriting assistant for a James Hardie siding sales team.
                     Analyze the following content from multiple documents to identify recurring themes and key points.
-                    Create a detailed, unique, and conversational script in the first-person perspective. 
-                    Ensure the script reflects common themes and provides a comprehensive overview for the sales associate. 
+                    Create a detailed consistent framework for a conversational script in the first-person perspective. 
+                    Ensure the script reflects common themes and provides a comprehensive overview. 
                     Avoid any timestamps or names like Jim, and make sure the script feels natural and informative. 
-                    You are representing Patriot Contracting, a James Hardie Elite Preferred Contractor"""
+                    You are representing Patriot Contracting, *** do not mention that you are a James Hardie Elite 
+                    Preferred Contractor until the end of the script"""
                 },
                 {
                     "role": "user",
