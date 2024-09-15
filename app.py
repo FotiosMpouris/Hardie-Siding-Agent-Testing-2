@@ -5,7 +5,7 @@ from main_functions import (
 )
 
 st.title("Hardie Siding Assistant")
-
+new_project_info = st.text_area("Please Enter New Project Information", height=200)
 # Get user's address
 st.header("Your Hardie Siding Project")
 address = st.text_input("Please enter your address:")
@@ -49,6 +49,14 @@ if st.button("Generate New Video Transcript"):
         file_name="new_video_transcript.txt",
         mime="text/plain"
     )
+
+if st.button("Generate New Script"):
+    if folder_id and new_project_info:
+        new_script = video_transcript_agent(folder_id, new_project_info)
+        st.write("Generated Script:")
+        st.write(new_script)
+    else:
+        st.warning("Please enter both a folder ID and new project information.")
 
 # import streamlit as st
 # from main_functions import (
