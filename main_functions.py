@@ -26,9 +26,9 @@ docs_service = build('docs', 'v1', credentials=creds)
 # Existing functions (unchanged)
 
 def video_transcript_agent(folder_id):
-    """
-    Generate a new video transcript based on existing documents in the Google Drive folder.
-    """
+        """
+        Generate a new video transcript based on existing documents in the Google Drive folder.
+        """
     try:
         # Get all documents from the specified folder
         query = f"'{folder_id}' in parents and mimeType='application/vnd.google-apps.document'"
