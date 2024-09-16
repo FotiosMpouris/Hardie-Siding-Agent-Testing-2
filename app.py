@@ -6,9 +6,7 @@ from main_functions import (
 
 st.title("Hardie Siding Assistant")
 
-new_project_info = st.text_area("Please Enter New Project Information", height=100)
-folder_id = st.text_input
-#("Enter Google Drive Folder ID", value="1Knd9Wk7pMSZue2mdgZZQtQfy1waUeLXH")
+
 # Get user's address
 st.header("Your Hardie Siding Project")
 address = st.text_input("Please enter your address:")
@@ -36,6 +34,10 @@ if user_question and user_question.lower() != 'exit':
     st.write("Feel free to ask more questions in the existing question box.")
 elif user_question.lower() == 'exit':
     st.write("Thank you for using the Hardie Siding Assistant!")
+
+new_project_info = st.text_area("Please Enter New Project Information", height=100)
+folder_id = st.text_input
+#("Enter Google Drive Folder ID", value="1Knd9Wk7pMSZue2mdgZZQtQfy1waUeLXH")
 
 # New feature: Generate video transcript
 if st.button("Generate New Script", key="generate_new_script"):
