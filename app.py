@@ -37,41 +37,37 @@ elif user_question.lower() == 'exit':
     st.write("Thank you for using the Hardie Siding Assistant!")
 
 
-if st.button("Generate New Video Transcript (Introductory/General)"):
+if st.button("Generate New Video Transcript (Introductory/General)", key="generate_general_transcript"):
     if folder_id:
-        with st.spinner("Generating new video transcript..."):
-            new_transcript = general_video_transcript_agent(folder_id, "")  # Passing an empty string for new_project_info
-        st.subheader("New Video Transcript Template:")
-        st.text_area("Generated Transcript", new_transcript, height=300)
+        with st.spinner("Generating new general video transcript..."):
+            new_transcript = general_video_transcript_agent(folder_id, "")
+        st.subheader("New General Video Transcript Template:")
+        st.text_area("Generated General Transcript", new_transcript, height=300)
         st.download_button(
-            label="Download New Transcript",
+            label="Download New General Transcript",
             data=new_transcript,
-            file_name="new_transcript.txt",
-            mime="text/plain"
+            file_name="new_general_transcript.txt",
+            mime="text/plain",
+            key="download_general_transcript"
         )
     else:
         st.warning("Please enter a folder ID.")
 
-new_project_info = st.text_area("Please Enter New Project Information", height=100)
-
-
-# New feature: Generate video transcript
-if st.button("Generate New Video Script (using new project info)", key="generate_new_script"):
+if st.button("Generate New Project-Specific Video Transcript", key="generate_project_transcript"):
     if folder_id and new_project_info:
-        with st.spinner("Generating new script..."):
-            new_script = video_transcript_agent(folder_id, new_project_info)
-        st.subheader("Generated Script:")
-        st.text_area("New Script", new_script, height=300)
+        with st.spinner("Generating new project-specific video transcript..."):
+            new_transcript = video_transcript_agent(folder_id, new_project_info)
+        st.subheader("New Project-Specific Video Transcript Template:")
+        st.text_area("Generated Project-Specific Transcript", new_transcript, height=300)
         st.download_button(
-            label="Download New Script",
-            data=new_script,
-            file_name="new_script.txt",
+            label="Download New Project-Specific Transcript",
+            data=new_transcript,
+            file_name="new_project_transcript.txt",
             mime="text/plain",
-            key="download_new_script"
+            key="download_project_transcript"
         )
     else:
         st.warning("Please enter both a folder ID and new project information.")
-
 
 
 
