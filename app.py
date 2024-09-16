@@ -1,7 +1,8 @@
 import streamlit as st
 from main_functions import (
     get_common_questions, search_hardie_siding, get_google_doc_by_address,
-    scrape_specific_url, siding_project_agent, cold_email_agent, video_transcript_agent
+    scrape_specific_url, siding_project_agent, cold_email_agent, video_transcript_agent,
+    general_video_tanscript_agent
 )
 
 st.title("Hardie Siding Assistant")
@@ -39,7 +40,7 @@ elif user_question.lower() == 'exit':
 if st.button("Generate New Video Transcript (Introductory/General)"):
     if folder_id:
         with st.spinner("Generating new video transcript..."):
-            new_transcript = video_transcript_agent(folder_id, "")  # Passing an empty string for new_project_info
+            new_transcript = general_video_transcript_agent(folder_id, "")  # Passing an empty string for new_project_info
         st.subheader("New Video Transcript Template:")
         st.text_area("Generated Transcript", new_transcript, height=300)
         st.download_button(
