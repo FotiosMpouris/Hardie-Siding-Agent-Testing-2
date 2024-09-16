@@ -20,6 +20,8 @@ groq_client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 together_client = Together(api_key=st.secrets["TOGETHER_API_KEY"])
 exa_client = Exa(api_key=st.secrets["EXA_API_KEY"])
 
+#adding this here from edit suggestions 9 16 @1034am
+FOLDER_ID = '1Knd9Wk7pMSZue2mdgZZQtQfy1waUeLXH'
 # Set up Google Drive and Docs API clients (unchanged)
 creds = service_account.Credentials.from_service_account_info(
     st.secrets["GOOGLE_SERVICE_ACCOUNT_INFO"],
@@ -185,17 +187,16 @@ print(common_points_summary)
 #         st.error(f"Error in video_transcript_agent: {str(e)}")
 #         return f"Unable to generate a new video transcript due to an error: {str(e)}"
 
-def video_transcript_agent(folder_id, new_project_info):
+def video_transcript_agent(new_project_info):
     """
     Generate a new video transcript based on existing documents in the Google Drive folder
     and new project information.
     """
     try:
         # Get all documents from the specified folder
-        query = f"'{folder_id}' in parents and mimeType='application/vnd.google-apps.document'"
+        query = f"'{FOLDER_ID}' in parents and mimeType='application/vnd.google-apps.document'"
         results = drive_service.files().list(q=query).execute()
         files = results.get('files', [])
-
         if not files:
             return "No documents found in the specified folder."
 
@@ -234,14 +235,10 @@ def video_transcript_agent(folder_id, new_project_info):
             max_tokens=1000,
             temperature=0.7,
         )
-
         return response.choices[0].message.content
-
     except Exception as e:
         st.error(f"Error in video_transcript_agent: {str(e)}")
-        return f"Unable to generate a new video transcript due to an error: {str(e)}"
-
-#def scrape_specific_url(url):
+        return f"Unable to generate a new video transcript due to an error: {str(e)}"#def scrape_specific_url(url):
     # ... (keep the existing implementation)
 def scrape_specific_url(url):
     try:
@@ -333,21 +330,50 @@ def get_google_doc_content(doc_id):
     return content
 #def get_google_doc_by_address(address):
     # ... (keep the existing implementation)
+# def get_google_doc_by_address(address):
+#     try:
+#         folder_id = '1Knd9Wk7pMSZue2mdgZZQtQfy1waUeLXH'  # Your Google Drive folder ID
+#         query = f"'{folder_id}' in parents and name contains '{address}'"
+        
+#         results = drive_service.files().list(q=query).execute()
+#         files = results.get('files', [])
+        
+#         if not files:
+#             st.warning(f"No document found for address: {address}")
+#             return f"No document found for address: {address}"
+
+#         file_id = files[0]['id']
+#         file_name = files[0]['name']
+#         st.write(f"Retrieving content for file: {file_name}")
+        
+#         if file_name.endswith('.txt'):
+#             file = drive_service.files().get_media(fileId=file_id).execute()
+#             doc_content = file.decode('utf-8')
+#         else:
+#             doc_content = get_google_doc_content(file_id)
+        
+#         if not doc_content:
+#             st.warning("No content found in the document.")
+#             return "No content found in the document."
+        
+#        # st.write(f"Retrieved content (first 100 chars): {doc_content[:100]}...")
+#         return doc_content
+#     except Exception as e:
+#         st.error(f"Error in get_google_doc_by_address: {str(e)}")
+#         return f"Unable to retrieve document for address '{address}' due to an error: {str(e)}"
+
+#adding def google doc by address from edit suggestion 9 16 @1037am
 def get_google_doc_by_address(address):
     try:
-        folder_id = '1Knd9Wk7pMSZue2mdgZZQtQfy1waUeLXH'  # Your Google Drive folder ID
-        query = f"'{folder_id}' in parents and name contains '{address}'"
+        query = f"'{FOLDER_ID}' in parents and name contains '{address}'"
         
         results = drive_service.files().list(q=query).execute()
         files = results.get('files', [])
         
         if not files:
-            st.warning(f"No document found for address: {address}")
             return f"No document found for address: {address}"
-
         file_id = files[0]['id']
         file_name = files[0]['name']
-        st.write(f"Retrieving content for file: {file_name}")
         
         if file_name.endswith('.txt'):
             file = drive_service.files().get_media(fileId=file_id).execute()
@@ -356,14 +382,12 @@ def get_google_doc_by_address(address):
             doc_content = get_google_doc_content(file_id)
         
         if not doc_content:
-            st.warning("No content found in the document.")
             return "No content found in the document."
         
-       # st.write(f"Retrieved content (first 100 chars): {doc_content[:100]}...")
         return doc_content
     except Exception as e:
-        st.error(f"Error in get_google_doc_by_address: {str(e)}")
         return f"Unable to retrieve document for address '{address}' due to an error: {str(e)}"
+
 #def test_google_drive_access():
     # ... (keep the existing implementation)
 def test_google_drive_access():
