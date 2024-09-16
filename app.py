@@ -35,12 +35,28 @@ if user_question and user_question.lower() != 'exit':
 elif user_question.lower() == 'exit':
     st.write("Thank you for using the Hardie Siding Assistant!")
 
+
+if st.button("Generate New Video Transcript (Introductory/General"):
+    if folder_id:
+        with st.spinner("Generating new video transcript..."):
+            new_transcript = video_transcript_agent(folder_id, "")  # Passing an empty string for new_project_info
+        st.subheader("New Video Transcript Template:")
+        st.text_area("Generated Transcript", new_transcript, height=300)
+        st.download_button(
+            label="Download New Transcript",
+            data=new_transcript,
+            file_name="new_transcript.txt",
+            mime="text/plain"
+        )
+    else:
+        st.warning("Please enter a folder ID.")
+
 new_project_info = st.text_area("Please Enter New Project Information", height=100)
 folder_id = st.text_input
 #("Enter Google Drive Folder ID", value="1Knd9Wk7pMSZue2mdgZZQtQfy1waUeLXH")
 
 # New feature: Generate video transcript
-if st.button("Generate New Script", key="generate_new_script"):
+if st.button("Generate New Video Script (new project info", key="generate_new_script"):
     if folder_id and new_project_info:
         with st.spinner("Generating new script..."):
             new_script = video_transcript_agent(folder_id, new_project_info)
@@ -55,21 +71,10 @@ if st.button("Generate New Script", key="generate_new_script"):
         )
     else:
         st.warning("Please enter both a folder ID and new project information.")
-        
-if st.button("Generate New Video Transcript (Old Method)"):
-    if folder_id:
-        with st.spinner("Generating new video transcript..."):
-            new_transcript = video_transcript_agent(folder_id, "")  # Passing an empty string for new_project_info
-        st.subheader("New Video Transcript Template:")
-        st.text_area("Generated Transcript", new_transcript, height=300)
-        st.download_button(
-            label="Download New Transcript",
-            data=new_transcript,
-            file_name="new_transcript.txt",
-            mime="text/plain"
-        )
-    else:
-        st.warning("Please enter a folder ID.")
+
+
+
+
 # if st.button("Generate New Script"):
 #     if folder_id and new_project_info:
 #         new_script = video_transcript_agent(folder_id, new_project_info)
