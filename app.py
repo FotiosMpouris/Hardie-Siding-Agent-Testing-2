@@ -5,7 +5,8 @@ from main_functions import (
 )
 
 st.title("Hardie Siding Assistant")
-
+folder_id = st.text_input
+#("Enter Google Drive Folder ID", value="1Knd9Wk7pMSZue2mdgZZQtQfy1waUeLXH")
 
 # Get user's address
 st.header("Your Hardie Siding Project")
@@ -52,8 +53,7 @@ if st.button("Generate New Video Transcript (Introductory/General)"):
         st.warning("Please enter a folder ID.")
 
 new_project_info = st.text_area("Please Enter New Project Information", height=100)
-folder_id = st.text_input
-#("Enter Google Drive Folder ID", value="1Knd9Wk7pMSZue2mdgZZQtQfy1waUeLXH")
+
 
 # New feature: Generate video transcript
 if st.button("Generate New Video Script (new project info", key="generate_new_script"):
