@@ -1,7 +1,7 @@
 import streamlit as st
 from main_functions import (
     get_common_questions, search_hardie_siding, get_google_doc_by_address,
-    scrape_specific_url, siding_project_agent, video_transcript_agent,
+    scrape_specific_url, siding_project_agent, cold_email_agent, video_transcript_agent,
 )
 
 st.title("Hardie Siding Assistant")
@@ -9,6 +9,7 @@ st.title("Hardie Siding Assistant")
 # Get user's address
 st.header("Your Hardie Siding Project")
 address = st.text_input("Please enter your address:")
+google_doc_content = ""
 if address:
     google_doc_content = get_google_doc_by_address(address)
     if "No document found" not in google_doc_content and "Unable to retrieve document" not in google_doc_content:
@@ -50,9 +51,9 @@ if st.button("Generate New Video Transcript (Introductory/General)"):
 
 new_project_info = st.text_area("Please Enter New Project Information", height=100)
 
-# New feature: Generate combined video script
-if st.button("Generate New Video Script (with Project Info)", key="generate_new_script"):
-    if new_project_info and general_transcript:
+# New feature: Generate video transcript with combined information
+if st.button("Generate New Video Script (using new project info)", key="generate_new_script"):
+    if new_project_info:
         with st.spinner("Generating new script..."):
             combined_info = f"General Transcript:\n{general_transcript}\n\nNew Project Information:\n{new_project_info}"
             new_script = video_transcript_agent(combined_info)
@@ -66,8 +67,7 @@ if st.button("Generate New Video Script (with Project Info)", key="generate_new_
             key="download_new_script"
         )
     else:
-        st.warning("Please generate a general transcript and enter new project information before generating a new script.")
-
+        st.warning("Please enter new project information.")
 
 # import streamlit as st
 # from main_functions import (
