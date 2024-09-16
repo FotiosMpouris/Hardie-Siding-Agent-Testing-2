@@ -36,7 +36,7 @@ elif user_question.lower() == 'exit':
     st.write("Thank you for using the Hardie Siding Assistant!")
 
 
-if st.button("Generate New Video Transcript (Introductory/General"):
+if st.button("Generate New Video Transcript (Introductory/General)"):
     if folder_id:
         with st.spinner("Generating new video transcript..."):
             new_transcript = video_transcript_agent(folder_id, "")  # Passing an empty string for new_project_info
