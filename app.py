@@ -2,7 +2,7 @@ import streamlit as st
 from main_functions import (
     get_common_questions, search_hardie_siding, get_google_doc_by_address,
     scrape_specific_url, siding_project_agent, cold_email_agent, video_transcript_agent,
-    scrape_certainteed  # New import
+    scrape_certainteed  # Make sure this is imported
 )
 
 st.title("Siding Assistant")
@@ -26,9 +26,6 @@ if address:
 st.header("Ask Questions About Your Siding Project")
 user_question = st.text_input("Do you have any questions about your siding project?")
 
-# CertainTeed URL input
-certainteed_url = st.text_input("Enter a specific CertainTeed URL (optional):")
-
 if user_question and user_question.lower() != 'exit':
     # Perform search
     search_results = search_hardie_siding(user_question)
@@ -37,10 +34,15 @@ if user_question and user_question.lower() != 'exit':
     hardie_url = "https://www.jameshardie.com/products"
     hardie_content = scrape_specific_url(hardie_url)
     
-    # Scrape CertainTeed content if URL is provided
+    # Scrape CertainTeed content
+    certainteed_urls = [
+        "https://www.certainteed.com/siding/",
+        "https://www.certainteed.com/siding/vinyl-siding/",
+        "https://www.certainteed.com/siding/polymer-siding/"
+    ]
     certainteed_content = ""
-    if certainteed_url:
-        certainteed_content = scrape_certainteed(certainteed_url)
+    for url in certainteed_urls:
+        certainteed_content += scrape_certainteed(url) + "\n\n"
     
     # Combine all relevant information
     all_info = f"{search_results}\n{google_doc_content}\n{hardie_content}\n{certainteed_content}"
@@ -85,7 +87,6 @@ if st.button("Generate New Video Script (using new project info)", key="generate
         )
     else:
         st.warning("Please enter new project information.")
-
 # import streamlit as st
 # from main_functions import (
 #     get_common_questions, search_hardie_siding, get_google_doc_by_address,
