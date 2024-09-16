@@ -6,8 +6,9 @@ from main_functions import (
 
 st.title("Hardie Siding Assistant")
 
-new_project_info = st.text_area("Please Enter New Project Information", height=200)
-folder_id = st.text_input("Enter Google Drive Folder ID", value="1Knd9Wk7pMSZue2mdgZZQtQfy1waUeLXH")
+new_project_info = st.text_area("Please Enter New Project Information", height=100)
+folder_id = st.text_input
+#("Enter Google Drive Folder ID", value="1Knd9Wk7pMSZue2mdgZZQtQfy1waUeLXH")
 # Get user's address
 st.header("Your Hardie Siding Project")
 address = st.text_input("Please enter your address:")
