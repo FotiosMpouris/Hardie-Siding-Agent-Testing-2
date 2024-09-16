@@ -30,67 +30,10 @@ creds = service_account.Credentials.from_service_account_info(
 drive_service = build('drive', 'v3', credentials=creds)
 docs_service = build('docs', 'v1', credentials=creds)
 
-# Existing functions (unchanged)
-
-# def video_transcript_agent(folder_id):
-#     """
-#     Generate a new video transcript based on existing documents in the Google Drive folder.
-#     """
-#     try:
-#         # Get all documents from the specified folder
-#         query = f"'{folder_id}' in parents and mimeType='application/vnd.google-apps.document'"
-#         results = drive_service.files().list(q=query).execute()
-#         files = results.get('files', [])
-
-#         if not files:
-#             return "No documents found in the specified folder."
-
-#         # Combine content from all documents
-#         all_content = ""
-#         for file in files:
-#             doc_content = get_google_doc_content(file['id'])
-#             all_content += doc_content + "\n\n"
-
-#         # Generate new transcript using the AI model
-#         response = together_client.chat.completions.create(
-#             model="mistralai/Mixtral-8x7B-Instruct-v0.1",
-#             messages=[
-#                 {
-#                     "role": "system",
-#                     "content": """You are a professional script writing agent for a James Hardie siding sales team. 
-#                     Use the provided transcripts to create a template that new sales teams can use. 
-#                     Cover the most common themes present in the transcripts, while allowing for unique elements for new customers. 
-#                     Always mentioned that you work for Patriot Contracting and that you we are a James Hardie Elite Preferred Contractor. 
-#                     Maintain the most important elements that are present in the provided transcripts."""
-#                 },
-#                 {
-#                     "role": "user",
-#                     "content": f"Create a new video transcript template based on the following content:\n\n{all_content}"
-#                 }
-#             ],
-#             max_tokens=1000,
-#             temperature=0.7,
-#         )
-
-#         return response.choices[0].message.content
-
-#     except Exception as e:
-#         st.error(f"Error in video_transcript_agent: {str(e)}")
-#         return f"Unable to generate a new video transcript due to an error: {str(e)}"
-
 
 def remove_timestamps(text):
     """Remove timestamps in the format [hh:mm:ss] from the text."""
     return re.sub(r'\[\d{2}:\d{2}:\d{2}\]', '', text)
-
-# def extract_common_points(doc_contents):
-#     """Extract and return common themes from a list of document contents."""
-#     # Placeholder for a more sophisticated common points extraction logic
-#     # For now, we'll just concatenate and return the cleaned content
-#     all_content = "\n\n".join(doc_contents)
-#     # Implement common points extraction logic here
-#     # For example, use NLP techniques to identify recurring themes
-#     return all_content
 
 def extract_common_points(doc_contents):
     """Extract and return common themes from a list of document contents using TF-IDF and cosine similarity."""
@@ -135,57 +78,6 @@ doc_contents = [
 common_points_summary = extract_common_points(doc_contents)
 print(common_points_summary)
 
-# def video_transcript_agent(folder_id):
-#     """
-#     Generate a new video transcript based on existing documents in the Google Drive folder.
-#     """
-#     try:
-#         # Get all documents from the specified folder
-#         query = f"'{folder_id}' in parents and mimeType='application/vnd.google-apps.document'"
-#         results = drive_service.files().list(q=query).execute()
-#         files = results.get('files', [])
-
-#         if not files:
-#             return "No documents found in the specified folder."
-
-#         # Combine content from all documents
-#         doc_contents = []
-#         for file in files:
-#             doc_content = get_google_doc_content(file['id'])
-#             cleaned_content = remove_timestamps(doc_content)  # Remove timestamps
-#             doc_contents.append(cleaned_content)
-
-#         # Extract common points from the document contents
-#         common_points = extract_common_points(doc_contents)
-
-#         # Generate new transcript using the AI model in a first-person conversational tone
-#         response = together_client.chat.completions.create(
-#             model="mistralai/Mixtral-8x7B-Instruct-v0.1",
-#             messages=[
-#                 {
-#                     "role": "system",
-#                     "content": """You are an AI scriptwriting assistant for a James Hardie siding sales team.
-#                     Analyze the following content from multiple documents to identify recurring themes and key points.
-#                     Create a detailed consistent framework for a conversational script in the first-person perspective. 
-#                     Ensure the script reflects common themes and provides a comprehensive overview. 
-#                     Avoid any timestamps or names like Jim, and make sure the script feels natural and informative. 
-#                     You are representing Patriot Contracting, *** do not mention that you are a James Hardie Elite 
-#                     Preferred Contractor until the end of the script"""
-#                 },
-#                 {
-#                     "role": "user",
-#                     "content": f"Create a detailed video transcript script based on the following content:\n\n{common_points}"
-#                 }
-#             ],
-#             max_tokens=1000,
-#             temperature=0.7,
-#         )
-
-#         return response.choices[0].message.content
-
-#     except Exception as e:
-#         st.error(f"Error in video_transcript_agent: {str(e)}")
-#         return f"Unable to generate a new video transcript due to an error: {str(e)}"
 
 def video_transcript_agent(input_info):
     """
@@ -240,59 +132,37 @@ def video_transcript_agent(input_info):
         st.error(f"Error in video_transcript_agent: {str(e)}")
         return f"Unable to generate a new video transcript due to an error: {str(e)}"
 
-# def video_transcript_agent(new_project_info):
-#     """
-#     Generate a new video transcript based on existing documents in the Google Drive folder
-#     and new project information.
-#     """
-#     try:
-#         # Get all documents from the specified folder
-#         query = f"'{FOLDER_ID}' in parents and mimeType='application/vnd.google-apps.document'"
-#         results = drive_service.files().list(q=query).execute()
-#         files = results.get('files', [])
-#         if not files:
-#             return "No documents found in the specified folder."
+def scrape_certainteed(url):
+    try:
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+        }
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.text, 'html.parser')
 
-#         # Combine content from all documents
-#         doc_contents = []
-#         for file in files:
-#             doc_content = get_google_doc_content(file['id'])
-#             cleaned_content = remove_timestamps(doc_content)  # Remove timestamps
-#             doc_contents.append(cleaned_content)
+        # Extract relevant content (adjust selectors as needed)
+        title = soup.find('h1').get_text() if soup.find('h1') else ""
+        paragraphs = [p.get_text() for p in soup.find_all('p')]
+        headings = [h.get_text() for h in soup.find_all(['h2', 'h3', 'h4'])]
+        list_items = [li.get_text() for li in soup.find_all('li')]
 
-#         # Extract common points from the document contents
-#         common_points = extract_common_points(doc_contents)
+        # Combine the extracted content
+        page_content = f"Title: {title}\n\n"
+        page_content += "Headings:\n" + "\n".join(headings) + "\n\n"
+        page_content += "Content:\n" + "\n".join(paragraphs) + "\n\n"
+        page_content += "List Items:\n" + "\n".join(list_items)
 
-#         # Combine common points with new project information
-#         combined_content = f"{common_points}\n\nNew Project Information:\n{new_project_info}"
+        # Limit content length
+        max_content_length = 2000  # Adjust as needed
+        if len(page_content) > max_content_length:
+            return page_content[:max_content_length] + "..."
 
-#         # Generate new transcript using the AI model in a first-person conversational tone
-#         response = together_client.chat.completions.create(
-#             model="mistralai/Mixtral-8x7B-Instruct-v0.1",
-#             messages=[
-#                 {
-#                     "role": "system",
-#                     "content": """You are an AI scriptwriting assistant for a James Hardie siding sales team.
-#                     Analyze the following content from multiple documents and new project information to identify recurring themes and key points.
-#                     Create a detailed consistent framework for a conversational script in the first-person perspective. 
-#                     Ensure the script reflects common themes, incorporates the new project information, and provides a comprehensive overview. 
-#                     Avoid any timestamps or names like Jim, and make sure the script feels natural and informative. 
-#                     You are representing Patriot Contracting, *** do not mention that you are a James Hardie Elite 
-#                     Preferred Contractor until the end of the script"""
-#                 },
-#                 {
-#                     "role": "user",
-#                     "content": f"Create a detailed video transcript script based on the following content and new project information:\n\n{combined_content}"
-#                 }
-#             ],
-#             max_tokens=1000,
-#             temperature=0.7,
-#         )
-#         return response.choices[0].message.content
-#     except Exception as e:
-#         st.error(f"Error in video_transcript_agent: {str(e)}")
-#         return f"Unable to generate a new video transcript due to an error: {str(e)}"#def scrape_specific_url(url):
-    # ... (keep the existing implementation)
+        return page_content if page_content else "No relevant content found on this page."
+
+    except requests.exceptions.RequestException as e:
+        return f"An error occurred while trying to scrape the CertainTeed URL: {e}"
+
 def scrape_specific_url(url):
     try:
         headers = {
@@ -381,39 +251,6 @@ def get_google_doc_content(doc_id):
                 if 'textRun' in element:
                     content += element.get('textRun', {}).get('content', '')
     return content
-#def get_google_doc_by_address(address):
-    # ... (keep the existing implementation)
-# def get_google_doc_by_address(address):
-#     try:
-#         folder_id = '1Knd9Wk7pMSZue2mdgZZQtQfy1waUeLXH'  # Your Google Drive folder ID
-#         query = f"'{folder_id}' in parents and name contains '{address}'"
-        
-#         results = drive_service.files().list(q=query).execute()
-#         files = results.get('files', [])
-        
-#         if not files:
-#             st.warning(f"No document found for address: {address}")
-#             return f"No document found for address: {address}"
-
-#         file_id = files[0]['id']
-#         file_name = files[0]['name']
-#         st.write(f"Retrieving content for file: {file_name}")
-        
-#         if file_name.endswith('.txt'):
-#             file = drive_service.files().get_media(fileId=file_id).execute()
-#             doc_content = file.decode('utf-8')
-#         else:
-#             doc_content = get_google_doc_content(file_id)
-        
-#         if not doc_content:
-#             st.warning("No content found in the document.")
-#             return "No content found in the document."
-        
-#        # st.write(f"Retrieved content (first 100 chars): {doc_content[:100]}...")
-#         return doc_content
-#     except Exception as e:
-#         st.error(f"Error in get_google_doc_by_address: {str(e)}")
-#         return f"Unable to retrieve document for address '{address}' due to an error: {str(e)}"
 
 #adding def google doc by address from edit suggestion 9 16 @1037am
 def get_google_doc_by_address(address):
@@ -459,59 +296,6 @@ def test_google_drive_access():
         st.error(f"Error testing Google Drive access: {str(e)}")
         st.error(f"Credentials info: {creds.to_json()[:100]}...")  # Show first 100 chars of credentials
         return False
-# New function to integrate colab agent functionality
-# def siding_project_agent(user_question, search_results, cold_email, google_doc_content):
-#     if user_question.lower() == 'exit':
-#         st.write("Exiting the program.")
-#         return
-
-#     response = together_client.chat.completions.create(
-#         model="meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo",
-#         messages=[
-#             {
-#                 "role": "system",
-#                 "content": "You are an expert James Hardie siding installer. Answer the user's question based on the previous data collected."
-#             },
-#             {
-#                 "role": "user",
-#                 "content": f"Target: {user_question} \n Search Results: {search_results} \n Cold Email: {cold_email} \n Google Doc Content: {google_doc_content} \n User Question: {user_question}"
-#             }
-#         ],
-#         max_tokens=500,
-#         temperature=0.1,
-#         top_p=1,
-#         top_k=50,
-#         repetition_penalty=1,
-#         stop=["<|eot_id|>"]
-#     )
-#     st.write(response.choices[0].message.content)
-
-# # Modified answer_question function to incorporate siding_project_agent
-
-# def siding_project_agent(user_question, search_results, cold_email, google_doc_content):
-#     if user_question.lower() == 'exit':
-#         st.write("Exiting the program.")
-#         return
-
-#     response = together_client.chat.completions.create(
-#         model="meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo",
-#         messages=[
-#             {
-#                 "role": "system",
-#                 "content": """You are an expert James Hardie siding installer speaking directly to a customer. 
-#                 Provide concise, first-person responses. Focus on answering the user's question directly.
-#                 Avoid repetition and keep your answer under 300 words. If you're unsure about something, 
-#                 it's okay to say so. Offer to provide more details if the user wants them."""
-#             },
-#             {
-#                 "role": "user",
-#                 "content": f"User Question: {user_question}\nRelevant Information: {search_results}\n{google_doc_content}"
-#             }
-#         ],
-#         max_tokens=150,
-#         temperature=0.7,
-#     )
-#     st.write(response.choices[0].message.content)
 
 def siding_project_agent(user_question, search_results, cold_email, google_doc_content):
     if user_question.lower() == 'exit':
@@ -544,9 +328,11 @@ def siding_project_agent(user_question, search_results, cold_email, google_doc_c
         st.error(f"Error in siding_project_agent: {str(e)}")
         st.write("I apologize, but I'm having trouble processing your request at the moment. Please try again or rephrase your question.")
 
-def answer_question(question, common_questions, search_results, google_doc_content, url=None):
+
+def answer_question(question, common_questions, search_results, google_doc_content, hardie_url=None, certainteed_url=None):
     try:
-        scraped_content = scrape_specific_url(url) if url else ""
+        hardie_content = scrape_specific_url(hardie_url) if hardie_url else ""
+        certainteed_content = scrape_certainteed(certainteed_url) if certainteed_url else ""
         
         # Use siding_project_agent for more interactive responses
         siding_project_agent(question, search_results, "", google_doc_content)
@@ -554,7 +340,7 @@ def answer_question(question, common_questions, search_results, google_doc_conte
         # If siding_project_agent doesn't provide a response, fall back to the original method
         if not st.session_state.get('response_generated'):
             prompt = f"""
-            I am an expert on Hardie Siding, and I'm here to help you with your question. Based on the information I have, here is my response:
+            I am an expert on siding, including Hardie Siding and CertainTeed products. I'm here to help you with your question. Based on the information I have, here is my response:
 
             Common Questions:
             {common_questions}
@@ -565,18 +351,21 @@ def answer_question(question, common_questions, search_results, google_doc_conte
             Google Doc Content:
             {google_doc_content}
 
-            Scraped Content:
-            {scraped_content}
+            Hardie Siding Content:
+            {hardie_content}
+
+            CertainTeed Content:
+            {certainteed_content}
 
             User Question: {question}
 
-            Let me provide you with a detailed and helpful answer based on what I know.
+            Let me provide you with a detailed and helpful answer based on what I know about both Hardie Siding and CertainTeed products.
             """
 
             response = groq_client.chat.completions.create(
                 model="llama-3.1-70b-versatile",
                 messages=[
-                    {"role": "system", "content": "You are a helpful sales associate and expert hardie installer specializing in Hardie Siding."},
+                    {"role": "system", "content": "You are a helpful sales associate and expert installer specializing in various siding products, including Hardie Siding and CertainTeed."},
                     {"role": "user", "content": prompt},
                 ],
                 max_tokens=500,
@@ -586,10 +375,47 @@ def answer_question(question, common_questions, search_results, google_doc_conte
         st.error(f"Error in answer_question: {str(e)}")
         return f"Unable to answer the question '{question}' due to an error."
 
-# # New function to generate cold email (placeholder for future implementation)
-# def cold_email_agent(user_input, search_results):
-#     # This is a placeholder function. Implement the cold email generation logic here.
-#     return "This is a placeholder for the cold email content."
+# def answer_question(question, common_questions, search_results, google_doc_content, url=None):
+#     try:
+#         scraped_content = scrape_specific_url(url) if url else ""
+        
+#         # Use siding_project_agent for more interactive responses
+#         siding_project_agent(question, search_results, "", google_doc_content)
+        
+#         # If siding_project_agent doesn't provide a response, fall back to the original method
+#         if not st.session_state.get('response_generated'):
+#             prompt = f"""
+#             I am an expert on Hardie Siding, and I'm here to help you with your question. Based on the information I have, here is my response:
+
+#             Common Questions:
+#             {common_questions}
+
+#             Search Results:
+#             {search_results}
+
+#             Google Doc Content:
+#             {google_doc_content}
+
+#             Scraped Content:
+#             {scraped_content}
+
+#             User Question: {question}
+
+#             Let me provide you with a detailed and helpful answer based on what I know.
+#             """
+
+#             response = groq_client.chat.completions.create(
+#                 model="llama-3.1-70b-versatile",
+#                 messages=[
+#                     {"role": "system", "content": "You are a helpful sales associate and expert hardie installer specializing in Hardie Siding."},
+#                     {"role": "user", "content": prompt},
+#                 ],
+#                 max_tokens=500,
+#             )
+#             return response.choices[0].message.content
+#     except Exception as e:
+#         st.error(f"Error in answer_question: {str(e)}")
+#         return f"Unable to answer the question '{question}' due to an error."
 
 def cold_email_agent(target, search_results):
     # Combine all search results into a single string
@@ -622,9 +448,48 @@ def cold_email_agent(target, search_results):
     )
     return response.choices[0].message.content
 
+def main():
+    st.title("Siding Project Assistant")
 
+    # Get user address and retrieve Google Doc content
+    user_address = st.text_input("Please enter your address:")
+    if user_address:
+        google_doc_content = get_google_doc_by_address(user_address)
+    else:
+        google_doc_content = ""
 
-# Main function to orchestrate the process
+    # Get user input for search query
+    user_input = st.text_input("Enter your question about siding:")
+
+    # Get CertainTeed URL input
+    certainteed_url = st.text_input("Enter a specific CertainTeed URL (optional):")
+
+    if user_input:
+        # Generate queries based on the user input
+        generated_queries = get_common_questions()  # You might want to modify this to generate queries based on user input
+
+        # Perform web searches for each query
+        search_results = [search_hardie_siding(query) for query in generated_queries]
+
+        # Generate a cold email based on the user input and search results
+        cold_email = cold_email_agent(user_input, search_results)
+
+        # Call the answer_question function with the retrieved Google Doc content and CertainTeed URL
+        answer = answer_question(user_input, generated_queries, search_results, google_doc_content, certainteed_url=certainteed_url)
+        st.write(answer)
+
+    # New feature: Generate video transcript
+    st.write("---")
+    st.write("Generate new video transcript for new client")
+    if st.button("Click Here"):
+        folder_id = '1Knd9Wk7pMSZue2mdgZZQtQfy1waUeLXH'  # Your Google Drive folder ID
+        new_transcript = video_transcript_agent(folder_id)
+        st.write("New Video Transcript Template:")
+        st.text_area("Generated Transcript", new_transcript, height=300)
+
+if __name__ == "__main__":
+    main()
+
 # def main():
 #     st.title("Hardie Siding Project Assistant")
 
@@ -651,40 +516,14 @@ def cold_email_agent(target, search_results):
 #         # Call the siding_project_agent function with the retrieved Google Doc content
 #         siding_project_agent(user_input, search_results, cold_email, google_doc_content)
 
-def main():
-    st.title("Hardie Siding Project Assistant")
+#     # New feature: Generate video transcript
+#     st.write("---")
+#     st.write("Generate new video transcript for new client")
+#     if st.button("Click Here"):
+#         folder_id = '1Knd9Wk7pMSZue2mdgZZQtQfy1waUeLXH'  # Your Google Drive folder ID
+#         new_transcript = video_transcript_agent(folder_id)
+#         st.write("New Video Transcript Template:")
+#         st.text_area("Generated Transcript", new_transcript, height=300)
 
-    # Get user address and retrieve Google Doc content
-    user_address = st.text_input("Please enter your address:")
-    if user_address:
-        google_doc_content = get_google_doc_by_address(user_address)
-    else:
-        google_doc_content = ""
-
-    # Get user input for search query
-    user_input = st.text_input("Enter your question about Hardie siding:")
-
-    if user_input:
-        # Generate queries based on the user input
-        generated_queries = get_common_questions()  # You might want to modify this to generate queries based on user input
-
-        # Perform web searches for each query
-        search_results = [search_hardie_siding(query) for query in generated_queries]
-
-        # Generate a cold email based on the user input and search results
-        cold_email = cold_email_agent(user_input, search_results)
-
-        # Call the siding_project_agent function with the retrieved Google Doc content
-        siding_project_agent(user_input, search_results, cold_email, google_doc_content)
-
-    # New feature: Generate video transcript
-    st.write("---")
-    st.write("Generate new video transcript for new client")
-    if st.button("Click Here"):
-        folder_id = '1Knd9Wk7pMSZue2mdgZZQtQfy1waUeLXH'  # Your Google Drive folder ID
-        new_transcript = video_transcript_agent(folder_id)
-        st.write("New Video Transcript Template:")
-        st.text_area("Generated Transcript", new_transcript, height=300)
-
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
