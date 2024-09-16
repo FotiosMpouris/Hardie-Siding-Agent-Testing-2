@@ -111,9 +111,9 @@ def video_transcript_agent(input_info):
             messages=[
                 {
                     "role": "system",
-                    "content": """You are an AI scriptwriting assistant for a James Hardie siding sales team.
-                    Analyze the following content from multiple documents, the general transcript, and new project information to create a comprehensive and personalized script.
-                    Create a detailed, consistent framework for a conversational script in the first-person perspective. 
+                    "content": """You are an expert installer and consultant for a James Hardie and Certainteed siding sales team.
+                    Analyze the following content from multiple documents, the general transcript, and new project information
+                    to create a comprehensive and personalized script in a detailed, consistent and conversational script in the first-person perspective. 
                     Ensure the script reflects common themes, incorporates the general transcript and new project information, and provides a comprehensive overview. 
                     Avoid any timestamps or names like Jim, and make sure the script feels natural, informative, and tailored to the specific project.
                     You are representing Patriot Contracting, *** do not mention that you are a James Hardie Elite 
@@ -311,7 +311,7 @@ def siding_project_agent(user_question, search_results, cold_email, google_doc_c
                     "content": """You are an expert siding installer specializing in James Hardie siding and CertainTeed products. 
                     Provide concise, first-person responses. Focus on answering the user's question directly.
                     Compare and contrast Hardie and CertainTeed products when relevant. 
-                    Avoid repetition and keep your answer under 300 words. If you're unsure about something, 
+                    Avoid repetition and keep your answer under 400 words. If you're unsure about something, 
                     it's okay to say so. Offer to provide more details if the user wants them."""
                 },
                 {
@@ -396,7 +396,7 @@ def answer_question(question, common_questions, search_results, google_doc_conte
             response = groq_client.chat.completions.create(
                 model="llama-3.1-70b-versatile",
                 messages=[
-                    {"role": "system", "content": "You are a helpful sales associate and expert installer specializing in various siding products, including Hardie Siding and CertainTeed."},
+                    {"role": "system", "content": "You are a helpful consultant and expert installer specializing in various siding products, including Hardie Siding and CertainTeed."},
                     {"role": "user", "content": prompt},
                 ],
                 max_tokens=500,
