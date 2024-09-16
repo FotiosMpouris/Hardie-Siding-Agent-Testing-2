@@ -328,36 +328,6 @@ def siding_project_agent(user_question, search_results, cold_email, google_doc_c
         st.write("I apologize, but I'm having trouble processing your request at the moment. Please try again or rephrase your question.")
 
 
-# def siding_project_agent(user_question, search_results, cold_email, google_doc_content):
-#     if user_question.lower() == 'exit':
-#         st.write("Exiting the program.")
-#         return
-
-#     combined_input = f"User Question: {user_question}\nRelevant Information: {search_results}\n{google_doc_content}"
-
-#     try:
-#         response = together_client.chat.completions.create(
-#             model="mistralai/Mixtral-8x7B-Instruct-v0.1",  # Changed to Mixtral model
-#             messages=[
-#                 {
-#                     "role": "system",
-#                     "content": """You are an expert James Hardie siding installer speaking directly to a customer. 
-#                     Provide concise, first-person responses. Focus on answering the user's question directly.
-#                     Avoid repetition and keep your answer above under 300 words. If you're unsure about something, 
-#                     it's okay to say so. Offer to provide more details if the user wants them."""
-#                 },
-#                 {
-#                     "role": "user",
-#                     "content": combined_input
-#                 }
-#             ],
-#             max_tokens=500,
-#             temperature=0.7,
-#         )
-#         st.write(response.choices[0].message.content)
-#     except Exception as e:
-#         st.error(f"Error in siding_project_agent: {str(e)}")
-#         st.write("I apologize, but I'm having trouble processing your request at the moment. Please try again or rephrase your question.")
 
 
 def answer_question(question, common_questions, search_results, google_doc_content, hardie_url=None, certainteed_url=None):
@@ -406,47 +376,6 @@ def answer_question(question, common_questions, search_results, google_doc_conte
         st.error(f"Error in answer_question: {str(e)}")
         return f"Unable to answer the question '{question}' due to an error."
 
-# def answer_question(question, common_questions, search_results, google_doc_content, url=None):
-#     try:
-#         scraped_content = scrape_specific_url(url) if url else ""
-        
-#         # Use siding_project_agent for more interactive responses
-#         siding_project_agent(question, search_results, "", google_doc_content)
-        
-#         # If siding_project_agent doesn't provide a response, fall back to the original method
-#         if not st.session_state.get('response_generated'):
-#             prompt = f"""
-#             I am an expert on Hardie Siding, and I'm here to help you with your question. Based on the information I have, here is my response:
-
-#             Common Questions:
-#             {common_questions}
-
-#             Search Results:
-#             {search_results}
-
-#             Google Doc Content:
-#             {google_doc_content}
-
-#             Scraped Content:
-#             {scraped_content}
-
-#             User Question: {question}
-
-#             Let me provide you with a detailed and helpful answer based on what I know.
-#             """
-
-#             response = groq_client.chat.completions.create(
-#                 model="llama-3.1-70b-versatile",
-#                 messages=[
-#                     {"role": "system", "content": "You are a helpful sales associate and expert hardie installer specializing in Hardie Siding."},
-#                     {"role": "user", "content": prompt},
-#                 ],
-#                 max_tokens=500,
-#             )
-#             return response.choices[0].message.content
-#     except Exception as e:
-#         st.error(f"Error in answer_question: {str(e)}")
-#         return f"Unable to answer the question '{question}' due to an error."
 
 def cold_email_agent(target, search_results):
     # Combine all search results into a single string
@@ -521,40 +450,3 @@ def main():
 if __name__ == "__main__":
     main()
 
-# def main():
-#     st.title("Hardie Siding Project Assistant")
-
-#     # Get user address and retrieve Google Doc content
-#     user_address = st.text_input("Please enter your address:")
-#     if user_address:
-#         google_doc_content = get_google_doc_by_address(user_address)
-#     else:
-#         google_doc_content = ""
-
-#     # Get user input for search query
-#     user_input = st.text_input("Enter your question about Hardie siding:")
-
-#     if user_input:
-#         # Generate queries based on the user input
-#         generated_queries = get_common_questions()  # You might want to modify this to generate queries based on user input
-
-#         # Perform web searches for each query
-#         search_results = [search_hardie_siding(query) for query in generated_queries]
-
-#         # Generate a cold email based on the user input and search results
-#         cold_email = cold_email_agent(user_input, search_results)
-
-#         # Call the siding_project_agent function with the retrieved Google Doc content
-#         siding_project_agent(user_input, search_results, cold_email, google_doc_content)
-
-#     # New feature: Generate video transcript
-#     st.write("---")
-#     st.write("Generate new video transcript for new client")
-#     if st.button("Click Here"):
-#         folder_id = '1Knd9Wk7pMSZue2mdgZZQtQfy1waUeLXH'  # Your Google Drive folder ID
-#         new_transcript = video_transcript_agent(folder_id)
-#         st.write("New Video Transcript Template:")
-#         st.text_area("Generated Transcript", new_transcript, height=300)
-
-# if __name__ == "__main__":
-#     main()
