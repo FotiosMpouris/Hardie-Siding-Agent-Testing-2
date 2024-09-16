@@ -5,7 +5,6 @@ from main_functions import (
 )
 
 st.title("Hardie Siding Assistant")
-folder_id = st.text_input ("Enter Google Drive Folder ID", value="1Knd9Wk7pMSZue2mdgZZQtQfy1waUeLXH")
 
 # Get user's address
 st.header("Your Hardie Siding Project")
@@ -35,30 +34,25 @@ if user_question and user_question.lower() != 'exit':
 elif user_question.lower() == 'exit':
     st.write("Thank you for using the Hardie Siding Assistant!")
 
-
 if st.button("Generate New Video Transcript (Introductory/General)"):
-    if folder_id:
-        with st.spinner("Generating new video transcript..."):
-            new_transcript = video_transcript_agent(folder_id, "")  # Passing an empty string for new_project_info
-        st.subheader("New Video Transcript Template:")
-        st.text_area("Generated Transcript", new_transcript, height=300)
-        st.download_button(
-            label="Download New Transcript",
-            data=new_transcript,
-            file_name="new_transcript.txt",
-            mime="text/plain"
-        )
-    else:
-        st.warning("Please enter a folder ID.")
+    with st.spinner("Generating new video transcript..."):
+        new_transcript = video_transcript_agent("", "")  # Passing empty strings as placeholders
+    st.subheader("New Video Transcript Template:")
+    st.text_area("Generated Transcript", new_transcript, height=300)
+    st.download_button(
+        label="Download New Transcript",
+        data=new_transcript,
+        file_name="new_transcript.txt",
+        mime="text/plain"
+    )
 
 new_project_info = st.text_area("Please Enter New Project Information", height=100)
 
-
 # New feature: Generate video transcript
 if st.button("Generate New Video Script (using new project info)", key="generate_new_script"):
-    if folder_id and new_project_info:
+    if new_project_info:
         with st.spinner("Generating new script..."):
-            new_script = video_transcript_agent(folder_id, new_project_info)
+            new_script = video_transcript_agent("", new_project_info)  # Passing an empty string for folder_id
         st.subheader("Generated Script:")
         st.text_area("New Script", new_script, height=300)
         st.download_button(
@@ -69,8 +63,7 @@ if st.button("Generate New Video Script (using new project info)", key="generate
             key="download_new_script"
         )
     else:
-        st.warning("Please enter both a folder ID and new project information.")
-
+        st.warning("Please enter new project information.")
 
 
 
