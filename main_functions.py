@@ -296,7 +296,6 @@ def test_google_drive_access():
         st.error(f"Error testing Google Drive access: {str(e)}")
         st.error(f"Credentials info: {creds.to_json()[:100]}...")  # Show first 100 chars of credentials
         return False
-
 def siding_project_agent(user_question, search_results, cold_email, google_doc_content):
     if user_question.lower() == 'exit':
         st.write("Exiting the program.")
@@ -306,13 +305,14 @@ def siding_project_agent(user_question, search_results, cold_email, google_doc_c
 
     try:
         response = together_client.chat.completions.create(
-            model="mistralai/Mixtral-8x7B-Instruct-v0.1",  # Changed to Mixtral model
+            model="mistralai/Mixtral-8x7B-Instruct-v0.1",
             messages=[
                 {
                     "role": "system",
-                    "content": """You are an expert James Hardie siding installer speaking directly to a customer. 
+                    "content": """You are an expert siding installer specializing in James Hardie siding and CertainTeed products. 
                     Provide concise, first-person responses. Focus on answering the user's question directly.
-                    Avoid repetition and keep your answer above under 300 words. If you're unsure about something, 
+                    Compare and contrast Hardie and CertainTeed products when relevant. 
+                    Avoid repetition and keep your answer under 300 words. If you're unsure about something, 
                     it's okay to say so. Offer to provide more details if the user wants them."""
                 },
                 {
@@ -327,6 +327,38 @@ def siding_project_agent(user_question, search_results, cold_email, google_doc_c
     except Exception as e:
         st.error(f"Error in siding_project_agent: {str(e)}")
         st.write("I apologize, but I'm having trouble processing your request at the moment. Please try again or rephrase your question.")
+
+
+# def siding_project_agent(user_question, search_results, cold_email, google_doc_content):
+#     if user_question.lower() == 'exit':
+#         st.write("Exiting the program.")
+#         return
+
+#     combined_input = f"User Question: {user_question}\nRelevant Information: {search_results}\n{google_doc_content}"
+
+#     try:
+#         response = together_client.chat.completions.create(
+#             model="mistralai/Mixtral-8x7B-Instruct-v0.1",  # Changed to Mixtral model
+#             messages=[
+#                 {
+#                     "role": "system",
+#                     "content": """You are an expert James Hardie siding installer speaking directly to a customer. 
+#                     Provide concise, first-person responses. Focus on answering the user's question directly.
+#                     Avoid repetition and keep your answer above under 300 words. If you're unsure about something, 
+#                     it's okay to say so. Offer to provide more details if the user wants them."""
+#                 },
+#                 {
+#                     "role": "user",
+#                     "content": combined_input
+#                 }
+#             ],
+#             max_tokens=500,
+#             temperature=0.7,
+#         )
+#         st.write(response.choices[0].message.content)
+#     except Exception as e:
+#         st.error(f"Error in siding_project_agent: {str(e)}")
+#         st.write("I apologize, but I'm having trouble processing your request at the moment. Please try again or rephrase your question.")
 
 
 def answer_question(question, common_questions, search_results, google_doc_content, hardie_url=None, certainteed_url=None):
