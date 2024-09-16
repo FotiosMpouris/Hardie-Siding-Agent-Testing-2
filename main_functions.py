@@ -162,7 +162,6 @@ def scrape_certainteed(url):
 
     except requests.exceptions.RequestException as e:
         return f"An error occurred while trying to scrape the CertainTeed URL: {e}"
-
 def scrape_specific_url(url):
     try:
         headers = {
