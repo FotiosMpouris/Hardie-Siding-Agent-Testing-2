@@ -2,7 +2,7 @@ import streamlit as st
 from main_functions import (
     get_common_questions, search_hardie_siding, get_google_doc_by_address,
     scrape_specific_url, siding_project_agent, cold_email_agent, video_transcript_agent,
-    general_video_tanscript_agent
+    general_video_transcript_agent
 )
 
 st.title("Hardie Siding Assistant")
