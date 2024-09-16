@@ -55,7 +55,7 @@ new_project_info = st.text_area("Please Enter New Project Information", height=1
 
 
 # New feature: Generate video transcript
-if st.button("Generate New Video Script (new project info", key="generate_new_script"):
+if st.button("Generate New Video Script (using new project info)", key="generate_new_script"):
     if folder_id and new_project_info:
         with st.spinner("Generating new script..."):
             new_script = video_transcript_agent(folder_id, new_project_info)
