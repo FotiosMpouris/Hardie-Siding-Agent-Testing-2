@@ -36,7 +36,7 @@ elif user_question.lower() == 'exit':
 
 if st.button("Generate New Video Transcript (Introductory/General)"):
     with st.spinner("Generating new video transcript..."):
-        new_transcript = video_transcript_agent("", "")  # Passing empty strings as placeholders
+        new_transcript = video_transcript_agent("")  # Passing an empty string for new_project_info
     st.subheader("New Video Transcript Template:")
     st.text_area("Generated Transcript", new_transcript, height=300)
     st.download_button(
@@ -52,7 +52,7 @@ new_project_info = st.text_area("Please Enter New Project Information", height=1
 if st.button("Generate New Video Script (using new project info)", key="generate_new_script"):
     if new_project_info:
         with st.spinner("Generating new script..."):
-            new_script = video_transcript_agent("", new_project_info)  # Passing an empty string for folder_id
+            new_script = video_transcript_agent(new_project_info)
         st.subheader("Generated Script:")
         st.text_area("New Script", new_script, height=300)
         st.download_button(
@@ -64,8 +64,6 @@ if st.button("Generate New Video Script (using new project info)", key="generate
         )
     else:
         st.warning("Please enter new project information.")
-
-
 
 # if st.button("Generate New Script"):
 #     if folder_id and new_project_info:
