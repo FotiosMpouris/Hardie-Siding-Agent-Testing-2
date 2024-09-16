@@ -5,8 +5,7 @@ from main_functions import (
 )
 
 st.title("Hardie Siding Assistant")
-folder_id = st.text_input
-#("Enter Google Drive Folder ID", value="1Knd9Wk7pMSZue2mdgZZQtQfy1waUeLXH")
+folder_id = st.text_input ("Enter Google Drive Folder ID", value="1Knd9Wk7pMSZue2mdgZZQtQfy1waUeLXH")
 
 # Get user's address
 st.header("Your Hardie Siding Project")
