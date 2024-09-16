@@ -134,9 +134,9 @@ common_points_summary = extract_common_points(doc_contents)
 print(common_points_summary)
 
 # attempting to change this agent to general_video_transcript_agent
-def general_video_transcript_agent(folder_id):
+def general_video_transcript_agent(folder_id, _):
     """
-    Generate a new video transcript based on existing documents in the Google Drive folder.
+    Generate a new general video transcript based on existing documents in the Google Drive folder.
     """
     try:
         # Get all documents from the specified folder
@@ -183,13 +183,12 @@ def general_video_transcript_agent(folder_id):
         return response.choices[0].message.content
 
     except Exception as e:
-        st.error(f"Error in video_transcript_agent: {str(e)}")
-        return f"Unable to generate a new video transcript due to an error: {str(e)}"
+        st.error(f"Error in general_video_transcript_agent: {str(e)}")
+        return f"Unable to generate a new general video transcript due to an error: {str(e)}"
 
 def video_transcript_agent(folder_id, new_project_info):
     """
-    Generate a new video transcript based on existing documents in the Google Drive folder
-    and new project information.
+    Generate a new project-specific video transcript based on existing documents and new project information.
     """
     try:
         # Get all documents from the specified folder
@@ -220,14 +219,12 @@ def video_transcript_agent(folder_id, new_project_info):
                 {
                     "role": "system",
                     "content": """You are an AI scriptwriting assistant for a James Hardie siding sales team.
-                    Analyze the following content from multiple documents and new project information to identify 
-                    recurring themes and key points. Create a detailed consistent framework for a conversational script 
-                    in the first-person perspective. Ensure the script reflects common themes, incorporates the new 
-                    project information, and provides a comprehensive overview. Avoid any timestamps or names like Jim,
-                    and make sure the script feels natural and informative. You are representing Patriot Contracting and will
-                    mention this fact at the beginning of each new script, *** do not mention that you are a James Hardie Elite 
-                    Preferred Contractor until the end of the script. ***Remember to always use common themes to incorporate 
-                    the new project information smoothly"""
+                    Analyze the following content from multiple documents and new project information to identify recurring themes and key points.
+                    Create a detailed consistent framework for a conversational script in the first-person perspective. 
+                    Ensure the script reflects common themes, incorporates the new project information, and provides a comprehensive overview. 
+                    Avoid any timestamps or names like Jim, and make sure the script feels natural and informative. 
+                    You are representing Patriot Contracting, *** do not mention that you are a James Hardie Elite 
+                    Preferred Contractor until the end of the script"""
                 },
                 {
                     "role": "user",
@@ -242,8 +239,7 @@ def video_transcript_agent(folder_id, new_project_info):
 
     except Exception as e:
         st.error(f"Error in video_transcript_agent: {str(e)}")
-        return f"Unable to generate a new video transcript due to an error: {str(e)}"
-
+        return f"Unable to generate a new project-specific video transcript due to an error: {str(e)}"
 #def scrape_specific_url(url):
     # ... (keep the existing implementation)
 def scrape_specific_url(url):
